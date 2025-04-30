@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الاشتراكات</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            text-align: right;
+            padding: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+            cursor: pointer;
+        }
+        th {
+            background-color: #f4b400;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:nth-child(odd) {
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h2>جدول الاشتراكات</h2>
+    <input type="text" id="searchInput" placeholder="ابحث في الجدول...">
+
+    <table>
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)">الوصف</th>
+                <th onclick="sortTable(1)">البريد الإلكتروني</th>
+                <th onclick="sortTable(2)">تاريخ التجديد</th>
+                <th onclick="sortTable(3)">الأيام المتبقية</th>
+            </tr>
+        </thead>
+        <tbody id="subscription-table">
+            <tr><td>Web Hosting Economy</td><td>thecaprigelato.com</td><td>03/04/2025</td><td></td></tr>
+            <tr><td>amazing-meals.com</td><td>No Protection</td><td>31/03/2025</td><td></td></tr>
+            <tr><td>Websites + Marketing Intl Free</td><td>New Account</td><td>26/03/2025</td><td></td></tr>
+            <tr><td>Microsoft 365 Email Essentials</td><td>adnan.shammout@bw-businessworld.com</td><td>04/09/2025</td><td></td></tr>
+            <tr><td>wsfinland.com</td><td>No Protection</td><td>06/06/2025</td><td></td></tr>
+            <tr><td>Gen4 VPS Linux 4 CPU - 1 year(s)</td><td>bw</td><td>19/06/2025</td><td></td></tr>
+            <tr><td>Website Security - Standard - 1 year(s)</td><td>bw-businessworld.com</td><td>19/06/2025</td><td></td></tr>
+            <tr><td>BW-BUSINESSWORLD.COM</td><td>No Protection</td><td>28/12/2025</td><td></td></tr>
+            <tr><td>Standard SSL</td><td>caprianigelato.com</td><td>22/01/2026</td><td></td></tr>
+            <tr><td>Web Hosting Deluxe</td><td>CAPRIANIGELATO.COM</td><td>30/01/2026</td><td></td></tr>
+            <tr><td>CAPRIANIGELATO.COM</td><td>No Protection</td><td>30/01/2026</td><td></td></tr>
+            <tr><td>Microsoft 365 Email Essentials with Security</td><td>damac@bw-businessworld.com</td><td>04/02/2026</td><td></td></tr>
+            <tr><td>Microsoft 365 Email Essentials</td><td>amjad@bw-businessworld.com</td><td>20/02/2026</td><td></td></tr>
+            <tr><td>Microsoft 365 Email Essentials</td><td>antoine.haddad@bw-businessworld.com</td><td>20/02/2026</td><td></td></tr>
+            <tr><td>Microsoft 365 Email Essentials</td><td>info@bw-businessworld.com</td><td>20/02/2026</td><td></td></tr>
+            <tr><td>Microsoft 365 Email Essentials</td><td>eyad@bw-businessworld.com</td><td>20/02/2026</td><td></td></tr>
+            <tr><td>Microsoft 365 Email Essentials</td><td>mohd.safadi@bw-businessworld.com</td><td>22/02/2026</td><td></td></tr>
+            <tr><td>Microsoft 365 Email Essentials</td><td>saher@bw-businessworld.com</td><td>22/02/2026</td><td></td></tr>
+            <tr><td>Microsoft 365 Email Essentials</td><td>hr@bw-businessworld.com</td><td>22/02/2026</td><td></td></tr>
+            <tr><td>THECAPRIGELATO.COM</td><td>No Protection</td><td>04/04/2026</td><td></td></tr>
+        </tbody>
+    </table>
+
+    <script>
+        // حساب الأيام المتبقية
+        const rows = document.querySelectorAll("#subscription-table tr");
+
+        rows.forEach(row => {
+            const dateCell = row.cells[2];
+            const daysLeftCell = row.cells[3];
+            const dateParts = dateCell.textContent.split("/");
+
+            if (dateParts.length === 3) {
+                const [day, month, year] = dateParts.map(Number);
+                const renewalDate = new Date(year, month - 1, day);
+                const today = new Date();
+
+                const diffTime = renewalDate - today;
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                daysLeftCell.textContent = diffDays;
+            } else {
+                daysLeftCell.textContent = "—";
+            }
+        });
+
+        // فلترة البحث
+        document.getElementById("searchInput").addEventListener("keyup", function () {
+            const filter = this.value.toLowerCase();
+            const trs = document.querySelectorAll("#subscription-table tr");
+
+            trs.forEach(tr => {
+                const text = tr.textContent.toLowerCase();
+                tr.style.display = text.includes(filter) ? "" : "none";
+            });
+        });
+
+        // الفرز عند الضغط على رأس العمود
+        let sortDirection = {};
+        function sortTable(columnIndex) {
+            const table = document.getElementById("subscription-table");
+            const rows = Array.from(table.rows);
+            const currentDirection = sortDirection[columnIndex] || 'asc';
+
+            rows.sort((a, b) => {
+                const cellA = a.cells[columnIndex].textContent.trim();
+                const cellB = b.cells[columnIndex].textContent.trim();
+
+                const isDate = /\d{2}\/\d{2}\/\d{4}/.test(cellA) && /\d{2}\/\d{2}\/\d{4}/.test(cellB);
+                const isNumber = !isNaN(cellA) && !isNaN(cellB);
+
+                if (isDate) {
+                    const parseDate = str => {
+                        const [day, month, year] = str.split("/").map(Number);
+                        return new Date(year, month - 1, day);
+                    };
+                    return currentDirection === 'asc'
+                        ? parseDate(cellA) - parseDate(cellB)
+                        : parseDate(cellB) - parseDate(cellA);
+                } else if (isNumber) {
+                    return currentDirection === 'asc'
+                        ? cellA - cellB
+                        : cellB - cellA;
+                } else {
+                    return currentDirection === 'asc'
+                        ? cellA.localeCompare(cellB)
+                        : cellB.localeCompare(cellA);
+                }
+            });
+
+            sortDirection[columnIndex] = currentDirection === 'asc' ? 'desc' : 'asc';
+
+            rows.forEach(row => table.appendChild(row));
+        }
+    </script>
+</body>
+</html>
